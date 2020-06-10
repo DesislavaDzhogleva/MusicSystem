@@ -9,12 +9,12 @@ namespace MusicSystem.Data.Models
     public class SongPerformer : BaseEntity<int>
     {
         [Required]
-        public int SongId { get; set; }
+        public int? SongId { get; set; }
 
         public Song Song { get; set; }
 
         [Required]
-        public int PerformerId { get; set; }
+        public int? PerformerId { get; set; }
 
         public Performer Performer { get; set; }
     }

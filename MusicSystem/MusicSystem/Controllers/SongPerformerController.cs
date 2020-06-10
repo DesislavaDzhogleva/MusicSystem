@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +19,14 @@ namespace MusicSystem.Controllers
     public class SongPerformerController : ControllerBase
     {
         private readonly ISongsPerformersService songsPerformersService;
-        private readonly ApplicationDbContext _context;
+        private readonly ISongsService songsService;
+        private readonly IPerformerService performerService;
 
-
-        public SongPerformerController(ISongsPerformersService songsPerformersService)
+        public SongPerformerController(ISongsPerformersService songsPerformersService, ISongsService songsService, IPerformerService performerService)
         {
             this.songsPerformersService = songsPerformersService;
+            this.songsService = songsService;
+            this.performerService = performerService;
         }
 
         // GET: api/SongPerformer
@@ -35,7 +38,7 @@ namespace MusicSystem.Controllers
 
         // GET: api/SongPerformer/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<SongPerformerDto>> GetSongPerformer(int id)
+        public ActionResult<SongPerformerDto> GetSongPerformer(int id)
         {
             var songPerformer = this.songsPerformersService.GetById<SongPerformerDto>(id);
 
@@ -50,80 +53,66 @@ namespace MusicSystem.Controllers
         // PUT: api/SongPerformer/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSongPerformer(int id, SongPerformer songPerformer)
-        {
-            if (id != songPerformer.SongId)
-            {
-                return BadRequest();
-            }
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutSongPerformer(int id, SongPerformerDto songPerformer)
+        //{
+        //    if (id != songPerformer.SongId)
+        //    {
+        //        return this.BadRequest();
+        //    }
 
-            _context.Entry(songPerformer).State = EntityState.Modified;
+        //    if (!this.ModelState.IsValid)
+        //    {
+        //        return this.BadRequest();
+        //    }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SongPerformerExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    if (this.songsService.Exists((int)songPerformer.SongId) || this.performerService.Exists((int)songPerformer.PerformerId))
+        //    {
+        //        return StatusCode((int)HttpStatusCode.Conflict);
+        //    }
 
-            return NoContent();
-        }
+        //    await this.songsPerformersService.Update(id, songPerformer);
+
+        //    return this.NoContent();
+        //}
 
         // POST: api/SongPerformer
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<SongPerformer>> PostSongPerformer(SongPerformer songPerformer)
+        public async Task<ActionResult<SongPerformerDto>> PostSongPerformer(SongPerformerDto songPerformer)
         {
-            _context.SongsPerformers.Add(songPerformer);
-            try
+            if (!this.ModelState.IsValid)
             {
-                await _context.SaveChangesAsync();
+                return this.BadRequest();
+                
             }
-            catch (DbUpdateException)
+            if (!this.songsService.Exists((int)songPerformer.SongId) || !this.performerService.Exists((int)songPerformer.PerformerId))
             {
-                if (SongPerformerExists(songPerformer.SongId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                return this.BadRequest();
             }
+
+                //return StatusCode((int)HttpStatusCode.Conflict);
+
+            await this.songsPerformersService.Add(songPerformer);
 
             return CreatedAtAction("GetSongPerformer", new { id = songPerformer.SongId }, songPerformer);
         }
 
         // DELETE: api/SongPerformer/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<SongPerformer>> DeleteSongPerformer(int id)
+        public async Task<ActionResult<SongPerformerDto>> DeleteSongPerformer(int id)
         {
-            var songPerformer = await _context.SongsPerformers.FindAsync(id);
-            if (songPerformer == null)
+            var exists = this.songsPerformersService.Exists(id);
+            if (!exists)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            _context.SongsPerformers.Remove(songPerformer);
-            await _context.SaveChangesAsync();
+            var songPerformer = this.songsPerformersService.GetById<SongPerformerDto>(id);
+            await this.songsPerformersService.DeleteAsync(id);
 
             return songPerformer;
-        }
-
-        private bool SongPerformerExists(int id)
-        {
-            return _context.SongsPerformers.Any(e => e.SongId == id);
         }
     }
 }

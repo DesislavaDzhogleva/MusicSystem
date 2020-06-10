@@ -8,11 +8,13 @@ namespace MusicSystem.DTOs
 {
     public class SongPerformerDto
     {
-        [Required]
-        public int SongId { get; set; }
+        public int Id { get; set; }
 
         [Required]
-        public int PerformerId { get; set; }
+        public int? SongId { get; set; }
+
+        [Required]
+        public int? PerformerId { get; set; }
 
     }
 }

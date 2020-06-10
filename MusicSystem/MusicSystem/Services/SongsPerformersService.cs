@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MusicSystem.Data.Models;
+using MusicSystem.DTOs;
 using MusicSystem.Repositories.Interfaces;
 using MusicSystem.Services.Interfaces;
 using System.Collections.Generic;
@@ -13,9 +14,9 @@ namespace MusicSystem.Services
         private readonly IRepository<SongPerformer> repository;
         private readonly IMapper mapper;
 
-        public SongsPerformersService(IRepository<SongPerformer> repository, IMapper mapper)
+        public SongsPerformersService(IRepository<SongPerformer> songPerformerRepository, IMapper mapper)
         {
-            this.repository = repository;
+            this.repository = songPerformerRepository;
             this.mapper = mapper;
         }
 
@@ -46,10 +47,10 @@ namespace MusicSystem.Services
             return resultDto;
         }
 
-        public bool Exists(int songId, int performerId)
+        public bool Exists(int id)
         {
             var song = this.repository.All()
-                .FirstOrDefault(x => x.SongId == songId && x.PerformerId == performerId);
+                .FirstOrDefault(x => x.Id == id);
 
             if (song == null)
             {
@@ -90,6 +91,40 @@ namespace MusicSystem.Services
             }
 
             return false;
+        }
+
+        public async Task<bool> Update(int id, SongPerformerDto songPerformerDto)
+        {
+            var songPerformer = this.repository.All()
+                .Where(x => x.Id == id)
+                .FirstOrDefault();
+            if (songPerformer == null)
+            {
+                return false;
+            }
+
+            this.mapper.Map<SongPerformerDto, SongPerformer>(songPerformerDto, songPerformer);
+            songPerformer.Id = id;
+
+
+            this.repository.Update(songPerformer);
+            await this.repository.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<int> Add(SongPerformerDto input)
+        {
+            var songPerformers = new SongPerformer()
+            {
+                SongId = input.SongId,
+                PerformerId = input.PerformerId,
+            };
+            
+            await this.repository.AddAsync(songPerformers);
+            await this.repository.SaveChangesAsync();
+
+            return songPerformers.Id;
+            
         }
     }
 }

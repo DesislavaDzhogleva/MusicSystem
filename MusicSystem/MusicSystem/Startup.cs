@@ -36,6 +36,7 @@ namespace MusicSystem
 
             services.AddTransient<ISongsService, SongsService>();
             services.AddTransient<ISongsPerformersService, SongsPerformersService>();
+            services.AddTransient<IPerformerService, PerformersService>();
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
             services.AddScoped<ApplicationDbContext>();

@@ -19,11 +19,15 @@ namespace MusicSystem.Controllers
     {
         private readonly ISongsService songsService;
         private readonly ISongsPerformersService songsPerformersService;
+        private readonly IAlbumsServicec albumsServicec;
+        private readonly IWritersService writersService;
 
-        public SongsController(ISongsService songsService, ISongsPerformersService songsPerformersService)
+        public SongsController(ISongsService songsService, ISongsPerformersService songsPerformersService, IAlbumsServicec albumsServicec, IWritersService writersService)
         {
             this.songsService = songsService;
             this.songsPerformersService = songsPerformersService;
+            this.albumsServicec = albumsServicec;
+            this.writersService = writersService;
         }
 
         // GET: api/Songs
@@ -85,7 +89,10 @@ namespace MusicSystem.Controllers
                 return this.BadRequest();
             }
 
-            //todo dies album and writer exist
+            if(!this.albumsServicec.Exists(song.AlbumId) || !this.writersService.Exists(song.WriterId))
+            {
+                return this.BadRequest();
+            }
             
             var resultId = await this.songsService.Add(song);
 
