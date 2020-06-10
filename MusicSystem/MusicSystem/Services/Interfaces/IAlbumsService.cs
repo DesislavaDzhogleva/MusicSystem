@@ -7,6 +7,8 @@ namespace MusicSystem.Services.Interfaces
 {
     public interface IAlbumsServicec
     {
+        Task<bool> DeleteByProducerId(int id);
+
         bool Exists(int id);
     }
 }

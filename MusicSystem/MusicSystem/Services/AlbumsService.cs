@@ -18,6 +18,25 @@ namespace MusicSystem.Services
             this.repository = repository;
             this.mapper = mapper;
         }
+
+        public async Task<bool> DeleteByProducerId(int id)
+        {
+            var albums = this.repository.All()
+                .Where(x => x.Id == id);
+
+            if (albums != null)
+            {
+                foreach(var album in albums)
+                {
+                    album.ProducerId = null;
+                }
+                await this.repository.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
+        }
+
         public bool Exists(int id)
         {
             var album = this.repository.All()

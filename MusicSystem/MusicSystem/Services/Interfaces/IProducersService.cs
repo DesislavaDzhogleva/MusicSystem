@@ -1,18 +1,20 @@
 ﻿using MusicSystem.DTOs;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MusicSystem.Services.Interfaces
 {
-    public interface ISongsService
+    public interface IProducersService
     {
         IEnumerable<T> GetAll<T>();
 
-        Task<int> Add(SongDto input);
+        Task<int> Add(ProducerDto input);
 
-        Task<bool> DeleteBySongId(int id);
+        Task<bool> Delete(int id);
 
-        Task<bool> Update(int id, SongDto song);
+        Task<bool> Update(int id, ProducerDto song);
 
         T GetById<T>(int id);
 

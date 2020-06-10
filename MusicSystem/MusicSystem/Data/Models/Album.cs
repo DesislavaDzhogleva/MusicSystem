@@ -15,7 +15,7 @@ namespace MusicSystem.Data.Models
         [Required]
         public DateTime ReleaseDate { get; set; }
 
-        public int ProducerId { get; set; }
+        public int? ProducerId { get; set; }
 
         public Producer Producer { get; set; }
 

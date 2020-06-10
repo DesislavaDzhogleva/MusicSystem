@@ -41,11 +41,6 @@ namespace MusicSystem.Services
             return song.Id;
         }
 
-        public bool DeleteBySongAndPerformerId(int songId, int performerId)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<bool> DeleteBySongId(int id)
         {
             var song = this.repository.All()
