@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MusicSystem.Data;
 using MusicSystem.Data.Models;
+using MusicSystem.DTOs;
+using MusicSystem.Services.Interfaces;
+using Newtonsoft.Json;
 
 namespace MusicSystem.Controllers
 {
@@ -14,30 +17,34 @@ namespace MusicSystem.Controllers
     [ApiController]
     public class SongsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ISongsService songsService;
+        private readonly ISongsPerformersService songsPerformersService;
 
-        public SongsController(ApplicationDbContext context)
+        public SongsController(ISongsService songsService, ISongsPerformersService songsPerformersService)
         {
-            _context = context;
+            this.songsService = songsService;
+            this.songsPerformersService = songsPerformersService;
         }
 
         // GET: api/Songs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Song>>> GetSongs()
+        public ActionResult<IEnumerable<SongDto>> GetSongs()
         {
-            return await _context.Songs.ToListAsync();
+            return this.songsService.GetAll<SongDto>().ToList();
         }
 
         // GET: api/Songs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Song>> GetSong(int id)
+        public ActionResult<SongDto> GetSong(int id)
         {
-            var song = await _context.Songs.FindAsync(id);
+            var exists = this.songsService.Exists(id);
 
-            if (song == null)
+            if (exists)
             {
-                return NotFound();
+                return this.NotFound();
             }
+
+            var song = this.songsService.GetById<SongDto>(id);
 
             return song;
         }
@@ -46,30 +53,23 @@ namespace MusicSystem.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSong(int id, Song song)
+        public async Task<IActionResult> PutSong(int id, SongDto song)
         {
-            if (id != song.Id)
+            song.Id = id;
+
+            if (!this.ModelState.IsValid)
             {
-                return BadRequest();
+                return this.BadRequest();
             }
 
-            _context.Entry(song).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SongExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            var result = await this.songsService.Update(id, song);
+
+            if(result == false)
+                return this.BadRequest();
+
+            //_context.Entry(song).State = EntityState.Modified;
+
 
             return NoContent();
         }
@@ -78,33 +78,36 @@ namespace MusicSystem.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Song>> PostSong(Song song)
+        public async Task<ActionResult<SongDto>> PostSong(SongDto song)
         {
-            _context.Songs.Add(song);
-            await _context.SaveChangesAsync();
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest();
+            }
 
-            return CreatedAtAction("GetSong", new { id = song.Id }, song);
+            //todo dies album and writer exist
+            
+            var resultId = await this.songsService.Add(song);
+
+
+            return CreatedAtAction("GetSong", new { id = resultId }, song);
         }
 
         // DELETE: api/Songs/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Song>> DeleteSong(int id)
+        public ActionResult<SongDto> DeleteSong(int id)
         {
-            var song = await _context.Songs.FindAsync(id);
+            var song = this.songsService.GetById<SongDto>(id);
             if (song == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            _context.Songs.Remove(song);
-            await _context.SaveChangesAsync();
+            this.songsPerformersService.DeleteBySongIdAsync(id);
+            this.songsService.DeleteBySongId(id);
 
             return song;
         }
 
-        private bool SongExists(int id)
-        {
-            return _context.Songs.Any(e => e.Id == id);
-        }
     }
 }

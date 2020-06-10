@@ -147,15 +147,22 @@ namespace MusicSystem.Migrations
 
             modelBuilder.Entity("MusicSystem.Data.Models.SongPerformer", b =>
                 {
-                    b.Property<int>("SongId")
-                        .HasColumnType("int");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("PerformerId")
                         .HasColumnType("int");
 
-                    b.HasKey("SongId", "PerformerId");
+                    b.Property<int>("SongId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("PerformerId");
+
+                    b.HasIndex("SongId");
 
                     b.ToTable("SongsPerformers");
                 });

@@ -143,4 +143,6 @@ C:\MusicSystem\MusicSystem\MusicSystem\bin\Debug\netcoreapp3.1\ru\Microsoft.Code
 C:\MusicSystem\MusicSystem\MusicSystem\bin\Debug\netcoreapp3.1\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\MusicSystem\MusicSystem\MusicSystem\bin\Debug\netcoreapp3.1\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\MusicSystem\MusicSystem\MusicSystem\bin\Debug\netcoreapp3.1\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\MusicSystem\MusicSystem\MusicSystem\bin\Debug\netcoreapp3.1\AutoMapper.dll
+C:\MusicSystem\MusicSystem\MusicSystem\bin\Debug\netcoreapp3.1\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\MusicSystem\MusicSystem\MusicSystem\obj\Debug\netcoreapp3.1\MusicSystem.MvcApplicationPartsAssemblyInfo.cache

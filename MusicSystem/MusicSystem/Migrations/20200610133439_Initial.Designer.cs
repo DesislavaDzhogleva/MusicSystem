@@ -10,7 +10,7 @@ using MusicSystem.Data;
 namespace MusicSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200609120507_Initial")]
+    [Migration("20200610133439_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -149,15 +149,22 @@ namespace MusicSystem.Migrations
 
             modelBuilder.Entity("MusicSystem.Data.Models.SongPerformer", b =>
                 {
-                    b.Property<int>("SongId")
-                        .HasColumnType("int");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("PerformerId")
                         .HasColumnType("int");
 
-                    b.HasKey("SongId", "PerformerId");
+                    b.Property<int>("SongId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("PerformerId");
+
+                    b.HasIndex("SongId");
 
                     b.ToTable("SongsPerformers");
                 });

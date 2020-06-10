@@ -4,18 +4,15 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MusicSystem.Data.Models
+namespace MusicSystem.DTOs
 {
-    public class SongPerformer : BaseEntity<int>
+    public class SongPerformerDto
     {
         [Required]
         public int SongId { get; set; }
 
-        public Song Song { get; set; }
-
         [Required]
         public int PerformerId { get; set; }
 
-        public Performer Performer { get; set; }
     }
 }

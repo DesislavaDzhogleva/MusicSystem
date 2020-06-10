@@ -111,12 +111,14 @@ namespace MusicSystem.Migrations
                 name: "SongsPerformers",
                 columns: table => new
                 {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     SongId = table.Column<int>(nullable: false),
                     PerformerId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SongsPerformers", x => new { x.SongId, x.PerformerId });
+                    table.PrimaryKey("PK_SongsPerformers", x => x.Id);
                     table.ForeignKey(
                         name: "FK_SongsPerformers_Performers_PerformerId",
                         column: x => x.PerformerId,
@@ -150,6 +152,11 @@ namespace MusicSystem.Migrations
                 name: "IX_SongsPerformers_PerformerId",
                 table: "SongsPerformers",
                 column: "PerformerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SongsPerformers_SongId",
+                table: "SongsPerformers",
+                column: "SongId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

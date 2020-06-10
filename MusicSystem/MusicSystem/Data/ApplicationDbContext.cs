@@ -35,13 +35,6 @@ namespace MusicSystem.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<SongPerformer>()
-                .HasKey(x => new
-                {
-                    x.SongId,
-                    x.PerformerId
-                });
-
             var entityTypes = modelBuilder.Model.GetEntityTypes().ToList();
             var foreignKeys = entityTypes
                 .SelectMany(e => e.GetForeignKeys().Where(f => f.DeleteBehavior == DeleteBehavior.Cascade));
