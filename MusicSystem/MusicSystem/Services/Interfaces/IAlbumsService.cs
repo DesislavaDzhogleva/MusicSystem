@@ -1,13 +1,24 @@
-﻿using System;
+﻿using MusicSystem.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MusicSystem.Services.Interfaces
 {
-    public interface IAlbumsServicec
+    public interface IAlbumsService
     {
+        IEnumerable<T> GetAll<T>();
+
+        T GetById<T>(int id);
+
+        Task<int> Add(AlbumDto input);
+
+        Task<bool> Update(int id, AlbumDto album);
+
         Task<bool> DeleteByProducerId(int id);
+
+        Task<bool> Delete(int id);
 
         bool Exists(int id);
     }

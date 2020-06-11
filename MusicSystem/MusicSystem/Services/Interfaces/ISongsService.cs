@@ -12,6 +12,10 @@ namespace MusicSystem.Services.Interfaces
 
         Task<bool> DeleteBySongId(int id);
 
+        Task<bool> DeleteByAlbumId(int id);
+
+        Task<bool> DeleteByWriterId(int id);
+
         Task<bool> Update(int id, SongDto song);
 
         T GetById<T>(int id);

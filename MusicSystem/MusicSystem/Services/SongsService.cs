@@ -31,8 +31,7 @@ namespace MusicSystem.Services
                 AlbumId = input.AlbumId,
                 Price = input.Price,
                 Duration = input.Duration,
-                CreatedOn = input.CreatedOn,
-                Performers = input.Performers
+                CreatedOn = input.CreatedOn
             };
 
             await this.repository.AddAsync(song);
@@ -50,6 +49,42 @@ namespace MusicSystem.Services
             if (song != null)
             {
                 this.repository.Delete(song);
+                await this.repository.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<bool> DeleteByAlbumId(int id)
+        {
+            var songs = this.repository.All()
+                .Where(x => x.AlbumId == id);
+
+            if (songs != null)
+            {
+                foreach(var song in songs)
+                {
+                    this.repository.Delete(song);
+                }
+                await this.repository.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
+        }
+        
+        public async Task<bool> DeleteByWriterId(int id)
+        {
+            var songs = this.repository.All()
+                .Where(x => x.WriterId == id);
+
+            if (songs != null)
+            {
+                foreach(var song in songs)
+                {
+                    this.repository.Delete(song);
+                }
                 await this.repository.SaveChangesAsync();
                 return true;
             }

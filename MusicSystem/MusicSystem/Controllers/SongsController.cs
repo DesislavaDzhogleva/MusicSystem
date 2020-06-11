@@ -19,10 +19,10 @@ namespace MusicSystem.Controllers
     {
         private readonly ISongsService songsService;
         private readonly ISongsPerformersService songsPerformersService;
-        private readonly IAlbumsServicec albumsServicec;
+        private readonly IAlbumsService albumsServicec;
         private readonly IWritersService writersService;
 
-        public SongsController(ISongsService songsService, ISongsPerformersService songsPerformersService, IAlbumsServicec albumsServicec, IWritersService writersService)
+        public SongsController(ISongsService songsService, ISongsPerformersService songsPerformersService, IAlbumsService albumsServicec, IWritersService writersService)
         {
             this.songsService = songsService;
             this.songsPerformersService = songsPerformersService;
@@ -43,7 +43,7 @@ namespace MusicSystem.Controllers
         {
             var exists = this.songsService.Exists(id);
 
-            if (exists)
+            if (!exists)
             {
                 return this.NotFound();
             }
@@ -71,8 +71,6 @@ namespace MusicSystem.Controllers
 
             if(result == false)
                 return this.BadRequest();
-
-            //_context.Entry(song).State = EntityState.Modified;
 
 
             return NoContent();

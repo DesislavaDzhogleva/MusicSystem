@@ -17,6 +17,11 @@ namespace MusicSystem.Mapping
             CreateMap<SongPerformerDto, SongPerformer>();
             CreateMap<SongPerformer, SongPerformerDto>();
             CreateMap<ProducerDto, Producer>();
+            CreateMap<Producer, ProducerDto>();
+            CreateMap<AlbumDto, Album>();
+            CreateMap<Album, AlbumDto>();
+            CreateMap<WriterDto, Writer>();
+            CreateMap<Writer, WriterDto>();
 
         }
     }

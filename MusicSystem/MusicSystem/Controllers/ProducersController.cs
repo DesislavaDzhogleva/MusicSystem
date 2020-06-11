@@ -18,9 +18,9 @@ namespace MusicSystem.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IProducersService producerService;
-        private readonly IAlbumsServicec albumsServicec;
+        private readonly IAlbumsService albumsServicec;
 
-        public ProducersController(ApplicationDbContext context, IProducersService producerService, IAlbumsServicec albumsServicec)
+        public ProducersController(ApplicationDbContext context, IProducersService producerService, IAlbumsService albumsServicec)
         {
             _context = context;
             this.producerService = producerService;
@@ -29,18 +29,18 @@ namespace MusicSystem.Controllers
 
         // GET: api/Producers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProducerDto>>> GetProducers()
+        public ActionResult<IEnumerable<ProducerDto>> GetProducers()
         {
             return this.producerService.GetAll<ProducerDto>().ToList();
         }
 
         // GET: api/Producers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProducerDto>> GetProducer(int id)
+        public ActionResult<ProducerDto> GetProducer(int id)
         {
             var exists = this.producerService.Exists(id);
 
-            if (exists)
+            if (!exists)
             {
                 return this.NotFound();
             }
@@ -56,15 +56,12 @@ namespace MusicSystem.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProducer(int id, ProducerDto producer)
         {
-            if (id != producer.Id)
-            {
-                return BadRequest();
-            }
-
             if (!this.ModelState.IsValid)
             {
                 return this.BadRequest();
             }
+
+            producer.Id = id;
 
 
             var result = await this.producerService.Update(id, producer);
@@ -75,7 +72,7 @@ namespace MusicSystem.Controllers
             //_context.Entry(song).State = EntityState.Modified;
 
 
-            return NoContent();
+            return CreatedAtAction("GetProducer", new { id = id }, producer);
         }
 
         // POST: api/Producers
@@ -89,14 +86,9 @@ namespace MusicSystem.Controllers
                 return this.BadRequest();
             }
 
-            if (!this.albumsServicec.Exists(producer.Id))
-            {
-                return this.BadRequest();
-            }
+            var id = await this.producerService.Add(producer);
 
-            await this.producerService.Add(producer);
-
-            return CreatedAtAction("GetProducer", new { id = producer.Id }, producer);
+            return CreatedAtAction("GetProducer", new { id = id }, producer);
         }
 
         // DELETE: api/Producers/5

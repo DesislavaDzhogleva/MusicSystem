@@ -26,7 +26,5 @@ namespace MusicSystem.DTOs
         [Required]
         [EmailAddress]
         public string Email { get; set; }
-
-        public ICollection<Album> PublishedAlbums { get; set; }
     }
 }
