@@ -20,6 +20,7 @@ namespace MusicSystem.Data
         public DbSet<Song> Songs { get; set; }
         public DbSet<SongPerformer> SongsPerformers { get; set; }
         public DbSet<Writer> Writers { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
