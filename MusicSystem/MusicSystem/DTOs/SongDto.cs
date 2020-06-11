@@ -27,10 +27,10 @@ namespace MusicSystem.DTOs
 
         [Required]
         [Range(1,int.MaxValue)]
-        public int AlbumId { get; set; }
+        public int? AlbumId { get; set; }
 
         [Required]
         [Range(1, int.MaxValue)]
-        public int WriterId { get; set; }
+        public int? WriterId { get; set; }
     }
 }

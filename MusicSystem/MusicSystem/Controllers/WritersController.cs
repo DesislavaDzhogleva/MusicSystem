@@ -81,9 +81,10 @@ namespace MusicSystem.Controllers
                 return this.BadRequest();
             }
 
-            await this.writersService.Add(writerDto);
+            var result = await this.writersService.Add(writerDto);
+            writerDto.Id = result;
 
-            return CreatedAtAction("GetWriter", new {}, writerDto);
+            return CreatedAtAction("GetWriter", new {id = result}, writerDto);
         }
 
         // DELETE: api/WriterDtoes/5

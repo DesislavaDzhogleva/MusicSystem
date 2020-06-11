@@ -63,13 +63,14 @@ namespace MusicSystem.Controllers
 
             producer.Id = id;
 
+            var isUnique = this.producerService.IsUnique(producer.Name, id);
+            if (isUnique == false)
+                return this.BadRequest("There is already a producer with that name");
 
             var result = await this.producerService.Update(id, producer);
 
             if (result == false)
                 return this.BadRequest();
-
-            //_context.Entry(song).State = EntityState.Modified;
 
 
             return CreatedAtAction("GetProducer", new { id = id }, producer);
@@ -88,6 +89,10 @@ namespace MusicSystem.Controllers
 
             var id = await this.producerService.Add(producer);
 
+            if (id == -1)
+                return this.BadRequest("There is already a producer with that name");
+
+            producer.Id = id;
             return CreatedAtAction("GetProducer", new { id = id }, producer);
         }
 

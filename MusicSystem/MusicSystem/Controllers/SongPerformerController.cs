@@ -56,18 +56,14 @@ namespace MusicSystem.Controllers
         //[HttpPut("{id}")]
         //public async Task<IActionResult> PutSongPerformer(int id, SongPerformerDto songPerformer)
         //{
-        //    if (id != songPerformer.SongId)
-        //    {
-        //        return this.BadRequest();
-        //    }
-
         //    if (!this.ModelState.IsValid)
         //    {
         //        return this.BadRequest();
         //    }
 
-        //    if (this.songsService.Exists((int)songPerformer.SongId) || this.performerService.Exists((int)songPerformer.PerformerId))
+        //    if (!this.songsService.Exists((int)songPerformer.SongId) || !this.performerService.Exists((int)songPerformer.PerformerId))
         //    {
+        //        return this.NotFound();
         //        return StatusCode((int)HttpStatusCode.Conflict);
         //    }
 
@@ -94,9 +90,10 @@ namespace MusicSystem.Controllers
 
                 //return StatusCode((int)HttpStatusCode.Conflict);
 
-            await this.songsPerformersService.Add(songPerformer);
+            var id = await this.songsPerformersService.Add(songPerformer);
+            songPerformer.Id = id;
 
-            return CreatedAtAction("GetSongPerformer", new { id = songPerformer.SongId }, songPerformer);
+            return CreatedAtAction("GetSongPerformer", new { id = id }, songPerformer);
         }
 
         // DELETE: api/SongPerformer/5

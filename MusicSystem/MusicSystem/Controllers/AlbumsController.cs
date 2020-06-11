@@ -59,7 +59,11 @@ namespace MusicSystem.Controllers
             var result = await this.albumsService.Update(id, albumDto);
 
             if (result == false)
-                return this.BadRequest();
+                return this.BadRequest("No such album");
+
+            var isQunie = this.albumsService.IsUnique(albumDto.Name, id);
+            if (isQunie == false)
+                return this.BadRequest("There is already album with that name in the database");
 
             return CreatedAtAction("GetAlbum", new { id = id }, albumDto);
         }
@@ -72,8 +76,12 @@ namespace MusicSystem.Controllers
                 return this.BadRequest();
             }
 
-            var id = await this.albumsService.Add(albumDto);
+            var id = await this.albumsService.AddAsync(albumDto);
 
+            if (id == -1)
+                return this.BadRequest("Already Exists Album With That Name");
+
+            albumDto.Id = id;
             return CreatedAtAction("GetAlbum", new { id = id }, albumDto);
         }
 

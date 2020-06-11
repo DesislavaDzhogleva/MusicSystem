@@ -21,14 +21,41 @@ namespace MusicSystem.Services
             this.mapper = mapper;
         }
 
+        public IEnumerable<T> GetAll<T>()
+        {
+            var songs = this.repository.All();
+
+            var resultDto = this.mapper.Map<List<T>>(songs);
+            return resultDto;
+        }
+
+        public T GetById<T>(int id)
+        {
+            var song = this.repository.All()
+                .Where(x => x.Id == id)
+                .FirstOrDefault();
+
+            var resultDto = this.mapper.Map<T>(song);
+            return resultDto;
+        }
+
         public async Task<int> Add(SongDto input)
         {
+            var existsWithName = this.repository.All()
+               .Where(x => x.Name == input.Name)
+               .FirstOrDefault();
+
+            if (existsWithName != null)
+            {
+                return -1;
+            }
+
             var song = new Song()
             {
                 Name = input.Name,
                 Genre = input.Genre,
-                WriterId = input.WriterId,
-                AlbumId = input.AlbumId,
+                WriterId = (int)input.WriterId,
+                AlbumId = (int)input.AlbumId,
                 Price = input.Price,
                 Duration = input.Duration,
                 CreatedOn = input.CreatedOn
@@ -37,8 +64,33 @@ namespace MusicSystem.Services
             await this.repository.AddAsync(song);
             await this.repository.SaveChangesAsync();
 
-            return song.Id;
+            var id = this.repository.All()
+                .Where(x => x.Name == song.Name)
+                .FirstOrDefault().Id;
+
+            return id;
         }
+
+        public async Task<bool> Update(int id, SongDto songDto)
+        {
+            var song = this.repository.All()
+                .Where(x => x.Id == id)
+                .FirstOrDefault();
+
+            if (song == null)
+            {
+                return false;
+            }
+
+            this.mapper.Map<SongDto, Song>(songDto, song);
+            song.Id = id;
+
+
+            this.repository.Update(song);
+            await this.repository.SaveChangesAsync();
+            return true;
+        }
+
 
         public async Task<bool> DeleteBySongId(int id)
         {
@@ -105,41 +157,21 @@ namespace MusicSystem.Services
             return true;
         }
 
-        public IEnumerable<T> GetAll<T>()
+        
+        public bool IsUnique(string name, int id)
         {
-                var songs = this.repository.All();
+            var existsWithName = this.repository.All()
+              .Where(x => x.Name == name && x.Id != id)
+              .FirstOrDefault();
 
-                var resultDto = this.mapper.Map<List<T>>(songs);
-                return resultDto;
-        }
-
-        public T GetById<T>(int id)
-        {
-            var song = this.repository.All()
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
-
-            var resultDto = this.mapper.Map<T>(song);
-            return resultDto;
-        }
-
-        public async Task<bool> Update(int id, SongDto songDto)
-        {
-            var song = this.repository.All()
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
-            if (song == null)
+            if (existsWithName == null)
+            {
+                return true;
+            }
+            else
             {
                 return false;
             }
-
-            this.mapper.Map<SongDto,Song>(songDto,song);
-            song.Id = id;
-   
-
-            this.repository.Update(song);
-            await this.repository.SaveChangesAsync();
-            return true;
         }
 
     }

@@ -41,6 +41,15 @@ namespace MusicSystem.Services
 
         public async Task<int> Add(ProducerDto input)
         {
+            var existsWithName = this.repository.All()
+               .Where(x => x.Name == input.Name)
+               .FirstOrDefault();
+
+            if (existsWithName != null)
+            {
+                return -1;
+            }
+
             var producer = new Producer()
             {
                 Name = input.Name,
@@ -52,7 +61,11 @@ namespace MusicSystem.Services
             await this.repository.AddAsync(producer);
             await this.repository.SaveChangesAsync();
 
-            return producer.Id;
+            var id = this.repository.All()
+                .Where(x => x.Name == producer.Name)
+                .FirstOrDefault().Id;
+
+            return id;
         }
 
         public async Task<bool> Update(int id, ProducerDto producerDto)
@@ -102,6 +115,22 @@ namespace MusicSystem.Services
             }
 
             return true;
+        }
+
+        public bool IsUnique(string name, int id)
+        {
+            var existsWithName = this.repository.All()
+              .Where(x => x.Name == name && x.Id != id)
+              .FirstOrDefault();
+
+            if (existsWithName == null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

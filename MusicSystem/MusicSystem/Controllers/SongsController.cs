@@ -62,15 +62,16 @@ namespace MusicSystem.Controllers
             song.Id = id;
 
             if (!this.ModelState.IsValid)
-            {
                 return this.BadRequest();
-            }
 
+            var isUnique = this.songsService.IsUnique(song.Name, id);
+            if (isUnique == false)
+                return this.BadRequest("Already song with that name");
 
             var result = await this.songsService.Update(id, song);
 
             if(result == false)
-                return this.BadRequest();
+                return this.NotFound();
 
 
             return NoContent();
@@ -87,13 +88,17 @@ namespace MusicSystem.Controllers
                 return this.BadRequest();
             }
 
-            if(!this.albumsServicec.Exists(song.AlbumId) || !this.writersService.Exists(song.WriterId))
+            if(!this.albumsServicec.Exists((int)song.AlbumId) || !this.writersService.Exists((int)song.WriterId))
             {
                 return this.BadRequest();
             }
             
             var resultId = await this.songsService.Add(song);
 
+            if (resultId == -1)
+                return this.BadRequest("Already song with that name");
+
+            song.Id = resultId;
 
             return CreatedAtAction("GetSong", new { id = resultId }, song);
         }

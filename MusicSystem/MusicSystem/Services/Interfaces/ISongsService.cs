@@ -21,5 +21,7 @@ namespace MusicSystem.Services.Interfaces
         T GetById<T>(int id);
 
         bool Exists(int id);
+
+        bool IsUnique(string name, int id);
     }
 }

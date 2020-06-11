@@ -12,7 +12,7 @@ namespace MusicSystem.Services.Interfaces
 
         T GetById<T>(int id);
 
-        Task<int> Add(AlbumDto input);
+        Task<int> AddAsync(AlbumDto input);
 
         Task<bool> Update(int id, AlbumDto album);
 
@@ -21,5 +21,7 @@ namespace MusicSystem.Services.Interfaces
         Task<bool> Delete(int id);
 
         bool Exists(int id);
+
+        bool IsUnique(string name, int id);
     }
 }

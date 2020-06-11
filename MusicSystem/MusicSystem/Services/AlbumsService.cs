@@ -3,6 +3,7 @@ using MusicSystem.Data.Models;
 using MusicSystem.DTOs;
 using MusicSystem.Repositories.Interfaces;
 using MusicSystem.Services.Interfaces;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,38 +40,35 @@ namespace MusicSystem.Services
         }
 
 
-        public async Task<int> Add(AlbumDto input)
+        public async Task<int> AddAsync(AlbumDto input)
         {
-            var producer = new Album()
+            var existsWithName = this.repository.All()
+                .Where(x => x.Name == input.Name)
+                .FirstOrDefault();
+
+            if (existsWithName != null)
+            {
+                return -1;
+            }
+
+            var album = new Album()
             {
                Name = input.Name,
                ReleaseDate = input.ReleaseDate,
                ProducerId = input.ProducerId
             };
 
-            await this.repository.AddAsync(producer);
+            await this.repository.AddAsync(album);
             await this.repository.SaveChangesAsync();
 
-            return 1;
+            //var albumReuslt = this.repository.All()
+            //    .Where(x => x.Name == album.Name)
+            //    .FirstOrDefault();
+
+            return album.Id;
         }
 
-        public async Task<bool> DeleteByProducerId(int id)
-        {
-            var albums = this.repository.All()
-                .Where(x => x.ProducerId == id);
-
-            if (albums != null)
-            {
-                foreach(var album in albums)
-                {
-                    album.ProducerId = null;
-                }
-                await this.repository.SaveChangesAsync();
-                return true;
-            }
-
-            return false;
-        }
+        
        
         public async Task<bool> Update(int id, AlbumDto albumDto)
         {
@@ -78,7 +76,7 @@ namespace MusicSystem.Services
                 .Where(x => x.Id == id)
                 .FirstOrDefault();
 
-            if (album == null)
+            if ( album == null)
             {
                 return false;
             }
@@ -92,19 +90,23 @@ namespace MusicSystem.Services
             return true;
         }
 
-        public bool Exists(int id)
+        public async Task<bool> DeleteByProducerId(int id)
         {
-            var album = this.repository.All()
-               .FirstOrDefault(x => x.Id == id);
+            var albums = this.repository.All()
+                .Where(x => x.ProducerId == id);
 
-            if (album == null)
+            if (albums != null)
             {
-                return false;
+                foreach (var album in albums)
+                {
+                    album.ProducerId = null;
+                }
+                await this.repository.SaveChangesAsync();
+                return true;
             }
 
-            return true;
+            return false;
         }
-
 
         public async Task<bool> Delete(int id)
         {
@@ -120,6 +122,35 @@ namespace MusicSystem.Services
             }
 
             return false;
+        }
+
+        public bool Exists(int id)
+        {
+            var album = this.repository.All()
+               .FirstOrDefault(x => x.Id == id);
+
+            if (album == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool IsUnique(string name, int id)
+        {
+            var existsWithName = this.repository.All()
+              .Where(x => x.Name == name && x.Id != id)
+              .FirstOrDefault();
+
+            if (existsWithName == null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
