@@ -10,13 +10,17 @@ namespace MusicSystem.Services.Interfaces
     {
         IEnumerable<T> GetAll<T>();
 
+        T GetById<T>(int id);
+
+        IEnumerable<T> GetByName<T>(string name);
+
         Task<int> Add(WriterDto input);
 
         Task<bool> Delete(int id);
 
         Task<bool> Update(int id, WriterDto song);
 
-        T GetById<T>(int id);
+        
         bool Exists(int id);
     }
 }

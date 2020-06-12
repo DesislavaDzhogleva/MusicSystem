@@ -34,9 +34,16 @@ namespace MusicSystem.Controllers
 
         // GET: api/Songs
         [HttpGet]
-        public ActionResult<IEnumerable<SongDto>> GetSongs()
+        public ActionResult<IEnumerable<SongDto>> GetSongs(string name, string albumName, string writerName)
         {
-            return this.songsService.GetAll<SongDto>().ToList();
+            if (name != null)
+                return this.songsService.GetByName<SongDto>(name).ToList();
+            else if (albumName != null)
+                return this.songsService.GetByAlbumName<SongDto>(albumName).ToList();
+            else if(writerName !=null)
+                return this.songsService.GetByWriterName<SongDto>(writerName).ToList();
+            else
+                return this.songsService.GetAll<SongDto>().ToList();
         }
 
         // GET: api/Songs/5

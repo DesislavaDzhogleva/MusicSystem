@@ -39,6 +39,15 @@ namespace MusicSystem.Services
             return resultDto;
         }
 
+        public IEnumerable<T> GetByPseudonym<T>(string pseudonym)
+        {
+            var album = this.repository.All()
+                .Where(x => x.Pseudonym == pseudonym);
+
+            var resultDto = this.mapper.Map<List<T>>(album);
+            return resultDto;
+        }
+
         public async Task<int> Add(ProducerDto input)
         {
             var existsWithName = this.repository.All()

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +14,7 @@ using MusicSystem.Services.Interfaces;
 
 namespace MusicSystem.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class ProducersController : ControllerBase
@@ -29,9 +32,12 @@ namespace MusicSystem.Controllers
 
         // GET: api/Producers
         [HttpGet]
-        public ActionResult<IEnumerable<ProducerDto>> GetProducers()
+        public ActionResult<IEnumerable<ProducerDto>> GetProducers(string pseudonym)
         {
-            return this.producerService.GetAll<ProducerDto>().ToList();
+            if(pseudonym == null)
+                return this.producerService.GetAll<ProducerDto>().ToList();
+
+            return this.producerService.GetByPseudonym<ProducerDto>(pseudonym).ToList();
         }
 
         // GET: api/Producers/5

@@ -13,11 +13,15 @@ namespace MusicSystem.Services
     public class SongsService : ISongsService
     {
         private readonly IRepository<Song> repository;
+        private readonly IRepository<Album> albumRepository;
+        private readonly IRepository<Writer> writerRepository;
         private readonly IMapper mapper;
 
-        public SongsService(IRepository<Song> repository, IMapper mapper)
+        public SongsService(IRepository<Song> repository,IRepository<Album> albumRepository,IRepository<Writer> writerRepository, IMapper mapper)
         {
             this.repository = repository;
+            this.albumRepository = albumRepository;
+            this.writerRepository = writerRepository;
             this.mapper = mapper;
         }
 
@@ -36,6 +40,41 @@ namespace MusicSystem.Services
                 .FirstOrDefault();
 
             var resultDto = this.mapper.Map<T>(song);
+            return resultDto;
+        }
+
+        public IEnumerable<T> GetByAlbumName<T>(string albumName)
+        {
+            var albumId = this.albumRepository.All()
+                .Where(x => x.Name == albumName)
+                .FirstOrDefault().Id;
+
+            var song = this.repository.All()
+                .Where(x => x.AlbumId == albumId);
+
+            var resultDto = this.mapper.Map<List<T>>(song);
+            return resultDto;
+        }
+
+        public IEnumerable<T> GetByWriterName<T>(string writerName)
+        {
+            var writerId = this.writerRepository.All()
+                .Where(x => x.Name == writerName)
+                .FirstOrDefault().Id;
+
+            var song = this.repository.All()
+                .Where(x => x.WriterId == writerId);
+
+            var resultDto = this.mapper.Map<List<T>>(song);
+            return resultDto;
+        }
+
+        public IEnumerable<T> GetByName<T>(string name)
+        {
+            var song = this.repository.All()
+                .Where(x => x.Name == name);
+
+            var resultDto = this.mapper.Map<List<T>>(song);
             return resultDto;
         }
 

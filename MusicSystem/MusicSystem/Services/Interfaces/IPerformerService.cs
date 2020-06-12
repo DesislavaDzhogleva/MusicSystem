@@ -7,6 +7,7 @@ namespace MusicSystem.Services.Interfaces
 {
     public interface IPerformerService
     {
+        IEnumerable<T> GetByName<T>(string name);
         bool Exists(int id);
     }
 }

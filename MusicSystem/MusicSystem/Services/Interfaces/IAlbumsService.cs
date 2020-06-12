@@ -12,6 +12,8 @@ namespace MusicSystem.Services.Interfaces
 
         T GetById<T>(int id);
 
+        IEnumerable<T> GetByName<T>(string name);
+
         Task<int> AddAsync(AlbumDto input);
 
         Task<bool> Update(int id, AlbumDto album);

@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using MusicSystem.DTOs;
 using MusicSystem.Data;
 using MusicSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MusicSystem.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class WritersController : ControllerBase
@@ -26,9 +28,12 @@ namespace MusicSystem.Controllers
 
         // GET: api/WriterDtoes
         [HttpGet]
-        public ActionResult<IEnumerable<WriterDto>> GetWriterDto()
+        public ActionResult<IEnumerable<WriterDto>> GetWriter(string name)
         {
-            return this.writersService.GetAll<WriterDto>().ToList();
+            if(name == null)
+                return this.writersService.GetAll<WriterDto>().ToList();
+
+            return this.writersService.GetByName<WriterDto>(name).ToList();
         }
 
         // GET: api/WriterDtoes/5

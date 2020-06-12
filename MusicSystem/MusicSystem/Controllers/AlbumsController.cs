@@ -8,9 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using MusicSystem.DTOs;
 using MusicSystem.Data;
 using MusicSystem.Services.Interfaces;
+using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MusicSystem.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class AlbumsController : ControllerBase
@@ -25,9 +28,12 @@ namespace MusicSystem.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<AlbumDto>> GetAlbum()
+        public ActionResult<IEnumerable<AlbumDto>> GetAlbum(string name)
         {
-            return this.albumsService.GetAll<AlbumDto>().ToList();
+            if(name == null)
+                return this.albumsService.GetAll<AlbumDto>().ToList();
+
+            return this.albumsService.GetByName<AlbumDto>(name).ToList();
         }
 
         [HttpGet("{id}")]

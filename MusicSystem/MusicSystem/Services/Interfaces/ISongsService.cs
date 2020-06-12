@@ -8,6 +8,12 @@ namespace MusicSystem.Services.Interfaces
     {
         IEnumerable<T> GetAll<T>();
 
+        IEnumerable<T> GetByAlbumName<T>(string albumName);
+
+        IEnumerable<T> GetByWriterName<T>(string writerName);
+
+        IEnumerable<T> GetByName<T>(string name);
+
         Task<int> Add(SongDto input);
 
         Task<bool> DeleteBySongId(int id);

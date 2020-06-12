@@ -39,6 +39,15 @@ namespace MusicSystem.Services
             return resultDto;
         }
 
+        public IEnumerable<T> GetByName<T>(string name)
+        {
+            var album = this.repository.All()
+                .Where(x => x.Name == name);
+
+            var resultDto = this.mapper.Map<List<T>>(album);
+            return resultDto;
+        }
+
 
         public async Task<int> AddAsync(AlbumDto input)
         {

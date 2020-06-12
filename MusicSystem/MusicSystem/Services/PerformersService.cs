@@ -31,5 +31,14 @@ namespace MusicSystem.Services
 
             return true;
         }
+
+        public IEnumerable<T> GetByName<T>(string name)
+        {
+            var album = this.repository.All()
+                .Where(x => x.StageName == name);
+
+            var resultDto = this.mapper.Map<List<T>>(album);
+            return resultDto;
+        }
     }
 }

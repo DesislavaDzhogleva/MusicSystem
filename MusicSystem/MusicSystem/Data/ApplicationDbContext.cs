@@ -65,8 +65,6 @@ namespace MusicSystem.Data
                 foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
             }
         }
-
-        public DbSet<MusicSystem.DTOs.WriterDto> WriterDto { get; set; }
       
     }
 }
